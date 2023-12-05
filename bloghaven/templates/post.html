@@ -1,0 +1,80 @@
+{%extends 'base.html'%}
+{%block title%}
+    <title>Post</title>
+{%endblock title%}
+
+{%block content%}
+    <div class="post-container">
+            <div class="single-post">
+               <div class="post-body">
+                    <div class="general-post">
+                       <div class="author-comment">
+                            <div class="author">
+                                <div class="media">
+                                    <img  class="author-image" src="{{ url_for('static', filename='images/' + post.author.image_file) }}" alt="Author image">
+        
+                                </div>
+                                <div>
+                                    <p class="author-name">Author: {{ post.author.username }}</p>
+                                    <p>{{ post.date_posted.strftime('%Y-%m-%d') }}</p>
+                                </div>
+                                
+                            </div>
+                            <h2><a href="#"><i class="fa-solid fa-comment"></i></a>({{ comments|length }})</h2>
+                       </div>
+                        <img class="single-post-image" src="{{ url_for('static', filename='post_image/' + post.post_image_file) }}" alt="Post Image">
+                        <h1 class="single-post-title">{{ post.title }}</h1>
+                        
+                        <p class="single-post-body">{{ post.content|safe }}</p>                
+                        <p class="single-post-category">{{post.category}}</p>
+                        
+                    </div>
+                    
+    
+    
+                    {%if post.author == current_user%}
+                        <div class="update-delete">
+                            <a class="update-btn" href="{{ url_for('update_post', post_id=post.id) }}">UPDATE</a>
+                            <a class="delete-btn" href="{{ url_for('delete_post', post_id=post.id) }}">DELETE</a>
+    
+                        </div>
+                    {%endif%}
+                </div>
+
+                <form action="{{ url_for('comment', post_id=post.id) }}" method="POST">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                        {{form.content.label(class="form-label")}}
+                        {%if form.content.errors%}
+                        {{form.content(class="post-form-control invalid")}}
+                        <div class="invalid-feedback">
+                            {%for error in form.content.errors%}
+                                <span>{{error}}</span>
+                            {%endfor%}
+                        </div>
+                        {%else%}
+                            {{form.content(class="form-control")}}
+                        {%endif%}
+                    </div>
+                    <div class="form-group">
+                        {{form.submit(class="comment-button")}}
+                    </div>
+                </form>
+
+                <div class="comments">
+                    <h2>Comments</h2>
+                    <ul>
+                        {% for comment in comments %}
+                        <li>
+                            <div class="comment">
+                                <p>{{ comment.date_posted.strftime('%Y-%m-%d') }}</p>
+                                <p class="comment-author">Comment by: {{ comment.user_id.username}}</p>
+                                <p class="comment-text">{{ comment.content }}</p>
+                                </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+    </div>
+{%endblock%}
